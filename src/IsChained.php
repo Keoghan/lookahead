@@ -2,8 +2,8 @@
 
 namespace Keoghan\Lookahead;
 
-use PhpParser\Node\Expr\MethodCall;
 use PhpParser\ParserFactory;
+use PhpParser\Node\Expr\MethodCall;
 
 class IsChained
 {
@@ -20,6 +20,15 @@ class IsChained
         return $this->hasChainedMethod($parsed[0]);
     }
 
+    /**
+     * Take the backtrace info and extract the details we need. Store method, file and line.
+     * Use the information to extract the 'line' of code from the relevant file and then
+     * ensure we have retrieved a complete line of source code for us to parse later.
+     *
+     * @param $trace
+     *
+     * @return string
+     */
     protected function analyseTrace($trace)
     {
         $this->fileName = $trace[1]['file'];
@@ -30,7 +39,8 @@ class IsChained
         $prepend = '';
         $fileContent = file($this->fileName);
 
-        //check before to EOL
+        // Check before the line for the start of statement
+        // Indicated by a ; or { for now
         $line = $this->lineNumber - 2;
         while (strpos($prepend, ';') === false && strpos($prepend, '{') === false && $line >=0) {
             $prepend = $fileContent[$line] . $prepend;
@@ -39,7 +49,8 @@ class IsChained
         $prepend = substr($prepend, strpos($prepend, ';') + 1);
         $prepend = substr($prepend, strpos($prepend, '{') + 1);
 
-        //check after to EOL
+        // Check after the line to the end of statement
+        // Indicated by ;
         $line = $this->lineNumber - 1;
         while (strpos($code, ';') === false && $line <= sizeof($fileContent)) {
             $code .= $fileContent[$line];
@@ -49,6 +60,13 @@ class IsChained
         return $prepend . $code;
     }
 
+    /**
+     * Parse the code into tree for us to work with
+     *
+     * @param $code
+     *
+     * @return null|\PhpParser\Node[]
+     */
     protected function parseCode($code)
     {
         $code = (substr($code, 0, 5) != '<?php' ? '<?php ' : '') . $code;
@@ -57,6 +75,14 @@ class IsChained
         return $parser->parse($code);
     }
 
+    /**
+     * Dig into the tree to see if our method has been chained
+     * Go recursive as needed through subnodes.
+     *
+     * @param $node
+     *
+     * @return bool
+     */
     protected function hasChainedMethod($node)
     {
         if (! method_exists($node, 'getSubNodeNames')) {
