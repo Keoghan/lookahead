@@ -1,6 +1,6 @@
 <?php
 
-namespace Lookahead;
+namespace Keoghan\Lookahead;
 
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\ParserFactory;

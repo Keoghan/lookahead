@@ -1,6 +1,6 @@
-<?php 
+<?php
 
-use Lookahead\IsChained;
+use Keoghan\Lookahead\IsChained;
 
 class Dummy
 {
