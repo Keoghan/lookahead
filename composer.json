@@ -1,4 +1,13 @@
 {
+    "name": "keoghan/lookahead",
+    "description": "Test of concept utility to check if a method is being chained",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Keoghan Litchfield",
+            "email": "keoghan@klever.co.uk"
+        }
+    ],
     "require": {
         "nikic/php-parser": "^2.1"
     },
