@@ -1,5 +1,20 @@
-# Test of concept package*
+# Lookahead
 
-## Check within a method whether it is subsequently chained
+> A proof of concept package
 
-(*wouldn't say it's developed enough to be a proof of concept at this point)
+A simple exploratory technique to identify if a method is subsequently chained. Potentially useful when writing a fluent interface.
+
+The test file provides a simple example. But, in the simplest form we just need the check and upon failure to enable chaining.
+
+```php
+    use \Keoghan\Lookahead\IsChained;
+    ...
+    public function lookingAhead()
+    {
+        if ((new IsChained)->check()) {
+            return $this;
+        }
+
+        return 'I was not chained';
+    }
+```
